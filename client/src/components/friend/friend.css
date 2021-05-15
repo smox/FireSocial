@@ -1,0 +1,47 @@
+.rightbar-friendlist-list-item {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.rightbar-friendlist-list-item-profile-picture-container {
+    margin-right: 10px;
+    position: relative;
+}
+
+.rightbar-friendlist-list-item-profile-picture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.rightbar-friendlist-list-item-profile-name {
+    font-weight: 500;
+
+}
+
+.rightbar-friendlist-list-item-status-online {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: lime;
+    position: absolute;
+    position: absolute;
+    top: -2px;
+    right: 0;
+    border: 2px solid white;
+}
+
+.rightbar-friendlist-list-item-status-offline {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: red;
+    position: absolute;
+    position: absolute;
+    top: -2px;
+    right: 0;
+    border: 2px solid white;
+}

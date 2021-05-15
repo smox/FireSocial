@@ -1,0 +1,76 @@
+.register {
+    width: 100vh;
+    height: 100vh;
+    background-color: #FCF6F5FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.register-wrapper {
+    width: 70%;
+    height: 70%;
+    display: flex;
+}
+
+.register-left,.register-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+} 
+
+.register-left-logo {
+    font-size: 50px;
+    font-weight: 800;
+    color: #990011FF;
+    margin-bottom: 10px;
+}
+
+.register-left-desc {
+    font-size: 24px;
+}
+
+.register-right-box {
+    height: 380px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.register-right-box-input {
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid grey;
+    font-size: 18px;
+    padding-left: 20px;
+}
+
+.register-right-box-input:focus {
+    outline: none;
+}
+
+.register-right-box-login,.register-right-box-register {
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    background-color: #990011FF;
+    color: #FCF6FC;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.register-right-box-reset {
+    margin-top: 10px;
+    text-align: center;
+    color: #990011FF;
+}
+
+.register-right-box-login {
+    height: 60px;
+    background-color: lightcoral;
+}
