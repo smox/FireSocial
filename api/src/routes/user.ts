@@ -5,7 +5,7 @@ import RequestWithUser from "../interfaces/RequestWithUser";
 import authMiddleware from "../middleware/auth.middleware";
 import { Types } from "mongoose";
 
-import User from '../models/User';
+import User, { IUser } from '../models/User';
 import { buildSuccessMessage, buildUnhandledRestError, buildValError } from "../utils.rest";
 
 export const route = express.Router();
@@ -13,9 +13,50 @@ route.use(authMiddleware);
 
 
 // get user
-route.get("/info", async (request: RequestWithUser, response: Response) => {
+route.get("/info/:id", async (request: RequestWithUser, response: Response) => {
     try {
-        return buildSuccessMessage(request.user, request, response, "User information successfully fetched", "success.user.info");
+        if(!request.param.id) {
+            request.user.password = undefined;
+            return buildSuccessMessage(request.user, request, response, "User information successfully fetched", "success.user.info");
+        }
+        const user = await User.findById(request.param.id);
+        if(!user) {
+            return buildValError(request, response, "User with ID cannot be found", "user.notFound");
+        }
+        user.password = undefined;
+        return buildSuccessMessage(user, request, response, "User information successfully fetched", "success.user.info");
+    } catch ( error ) {
+        return buildUnhandledRestError(error, request, response);
+    }
+});
+
+/*
+ * Gets the userinformation by ID or Username query. 
+ * If no query param is provided the Endpoint returns the information from the current user
+ */
+route.get("/", async (request: RequestWithUser, response: Response) => {
+    try {
+
+        if(request.query.id) {
+            const user = await User.findById(request.query.id);
+            if(user) {
+                user.password = undefined;
+                return buildSuccessMessage(user, request, response, "User fetched successfully by ID", "success.user.id");
+            }
+            return buildValError(request, response, "User with ID cannot be found", "user.notFound");
+        } else if(request.query.username) {
+            const user = await User.findOne({ username: request.query.username })
+            if(user) {
+                user.password = undefined;
+                return buildSuccessMessage(user, request, response, "User fetched successfully by ID", "success.user.id");
+            }
+            return buildValError(request, response, "User with ID cannot be found", "user.notFound");
+        }
+
+        const user = request.user;
+        user.password = undefined;
+        return buildSuccessMessage(user, request, response, "User information successfully fetched", "success.user.info");
+
     } catch ( error ) {
         return buildUnhandledRestError(error, request, response);
     }
@@ -29,32 +70,30 @@ route.put("/follow", async (request: RequestWithUser, response: Response) => {
         const userIdToFollow = request.body["userId"];
 
         if(!userIdToFollow) {
-            return response.status(500).json({ errorMessage: "UserId is missing" })
+            return buildValError(request, response,  "UserId is missing", "userid.missing");
         }
 
         if(String(user._id) === userIdToFollow) {
-            return response.status(403).json({ errorMessage: "You cannot follow yourself" });
+            return buildValError(request, response, "You cannot follow yourself", "following.yourself");
         }
     
         if( user.following.includes(userIdToFollow)) {
-            return response.status(500).json({ errorMessage: "You already follow this user" });
+            return buildValError(request, response,  "You already follow this user", "following.already");
         }
 
         if(!Types.ObjectId.isValid(userIdToFollow)) {
-            return response.status(500).json({ errorMessage: "UserId not valid" });
+            return buildValError(request, response, "UserId not valid", "userid.invalid");
         }
 
         const userToFollow = await User.findById(userIdToFollow);
         if(!userToFollow) {
-            return response.status(500).json({ errorMessage: "UserId does not exist" });
+            return buildValError(request, response, "UserId does not exist", "userid.notexists");
         }
 
         await user.updateOne({ $push: { following: userIdToFollow }});
         await userToFollow.updateOne({ $push: { followers: String(user._id) }})
         
-        user = await User.findById(user._id);
-
-        return buildSuccessMessage(user, request, response, "User successfully followed", "success.user.followed");
+        return buildSuccessMessage(userToFollow, request, response, "User successfully followed", "success.user.followed");
 
     } catch (error) {
         return buildUnhandledRestError(error, request, response);
@@ -62,42 +101,40 @@ route.put("/follow", async (request: RequestWithUser, response: Response) => {
 });
 
 // unfollow a user
-route.put("/unfollow", async (req: RequestWithUser, res: Response) => {
+route.put("/unfollow", async (request: RequestWithUser, response: Response) => {
     try {
 
-        let user = req.user;
-        const userIdToFollow = req.body["userId"];
+        let user = request.user;
+        const userIdToFollow = request.body["userId"];
 
         if(!userIdToFollow) {
-            return res.status(500).json({ errorMessage: "UserId is missing" })
+            return buildValError(request, response,  "UserId is missing", "userid.missing");
         }
 
         if(String(user._id) === userIdToFollow) {
-            return res.status(403).json({ errorMessage: "You cannot unfollow yourself" });
+            return buildValError(request, response, "You cannot unfollow yourself", "unfollowing.yourself");
         }
     
         if( !user.following.includes(userIdToFollow)) {
-            return res.status(500).json({ errorMessage: "You are not following this user" });
+            return buildValError(request, response,  "You are not following this user", "unfollowing.notpossible");
         }
 
         if(!Types.ObjectId.isValid(userIdToFollow)) {
-            return res.status(500).json({ errorMessage: "UserId not valid" });
+            return buildValError(request, response, "UserId not valid", "userid.invalid");
         }
 
         const userToFollow = await User.findById(userIdToFollow);
         if(!userToFollow) {
-            return res.status(500).json({ errorMessage: "UserId does not exist" });
+            return buildValError(request, response, "UserId does not exist", "userid.notexists");
         }
 
         await user.updateOne({ $pull: { following: userIdToFollow }});
         await userToFollow.updateOne({ $pull: { followers: String(user._id) }})
         
-        user = await User.findById(user._id);
-
-        return buildSuccessMessage(user, req, res, "User successfully unfollowed", "success.user.unfollowed");
+        return buildSuccessMessage(userToFollow, request, response, "User successfully unfollowed", "success.user.unfollowed");
 
     } catch (error) {
-        return buildUnhandledRestError(error, req, res);
+        return buildUnhandledRestError(error, request, response);
     }
 });
 
@@ -127,6 +164,29 @@ route.put("/", async (request: RequestWithUser, response: Response) => {
         return buildUnhandledRestError(err, request, response);
     }
 });
+
+route.get("/friends/:id", async (request: RequestWithUser, response: Response) => {
+    const paramId = request.params.id;
+    console.info(`REST Call: GetFriends ${paramId}`);
+
+    let user;
+    try {
+        if(paramId) {
+            user = await User.findById(paramId);
+            if(!user) {
+                return buildValError(request, response, `Cannot find User with ID ${paramId}`, "user.notFound");
+            } 
+        } else {
+            user = request.user;
+        }
+        const friendIds = user.following;
+        return buildSuccessMessage(
+            await User.find().where("_id").in(friendIds).exec(), 
+            request, response, "Friends successfully fetched", "success.friendlist");
+    } catch (error) {
+        return buildUnhandledRestError(error, request, response);
+    }
+})
 
 // delete a user
 route.delete("/", async (req: RequestWithUser, res: Response) => {

@@ -16,8 +16,7 @@ const postSchema = new mongoose.Schema({
     title: {
         type: String,
         min: 1,
-        max: 100,
-        required: true
+        max: 100
     },
     text: {
         type: String,

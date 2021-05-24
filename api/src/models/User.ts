@@ -5,8 +5,8 @@ export interface IUser {
     username: string;
     email: string;
     password: string | undefined;
-    coverPicture: string;
-    profilePicture: string;
+    coverPicture: string | undefined;
+    profilePicture: string | undefined;
     following: string[];
     followers: string[];
     isAdmin: boolean;

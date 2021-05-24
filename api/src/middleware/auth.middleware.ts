@@ -9,7 +9,7 @@ async function authMiddleware(request: RequestWithUser, response: Response, next
 
   try {
     const cookies = request.cookies;
-    if (!cookies && cookies.Authorization) {
+    if(!cookies || !cookies.Authorization) {
       return buildAuthError(request, response, "No Authorization Token provided", "token.missing");
     }
     const secret = process.env.JWT_SECRET!;

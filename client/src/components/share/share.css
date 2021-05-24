@@ -60,6 +60,13 @@
     cursor: pointer;
 }
 
+.share-bottom-options-option-disabled {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+    cursor: not-allowed;
+}
+
 .share-bottom-options-option-icon {
     font-size: 18px;
     margin-right: 3px;

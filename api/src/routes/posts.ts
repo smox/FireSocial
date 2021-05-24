@@ -7,6 +7,7 @@ import { Types } from "mongoose";
 
 import Post from "../models/Post";
 import { buildSuccessMessage, buildValError, buildUnhandledRestError } from "../utils.rest";
+import userModel from "../models/User";
 
 export const route = express.Router();
 route.use(authMiddleware);
@@ -17,17 +18,15 @@ const entityType = "post";
 route.post("/", async (request: RequestWithUser, response: Response) => {
     console.info(`REST Call: CreatePost`);
     try {
-
+        
         // Code duplication BEGIN
         const postRequest = request.body;
-        if(!postRequest.title) {
-            return buildValError(request, response, "No title provided", "missing.body.title");
+        if(postRequest.title) {
+            postRequest.title = postRequest.title.trim();
+            if(postRequest.title.length < 5 || postRequest.title.length > 100) {
+                return buildValError(request, response, "Titles of posts must be between 5 and 100 characters long", "invalid.body.title.length");   
+            }     
         }
-
-        postRequest.title = postRequest.title.trim();
-        if(postRequest.title.length < 5 || postRequest.title.length > 100) {
-            return buildValError(request, response, "Titles of posts must be between 5 and 100 characters long", "invalid.body.title.length");   
-        }     
 
         if(!postRequest.text || postRequest.text.length < 5) {
             return buildValError(request, response, "No text provied", "missing.body.text");  
@@ -51,7 +50,6 @@ route.post("/", async (request: RequestWithUser, response: Response) => {
         return buildUnhandledRestError(error, request, response);
     }
 });
-
 
 // update a post
 route.put("/:id", async (request: RequestWithUser, response: Response) => {
@@ -78,15 +76,15 @@ route.put("/:id", async (request: RequestWithUser, response: Response) => {
 
 
         // Code duplication BEGIN
-        const postRequest = request.body;
-        if(!postRequest.title) {
-            return buildValError(request, response, "No title provided", "missing.body.title");
-        }
 
-        postRequest.title = postRequest.title.trim();
-        if(postRequest.title.length < 5 || postRequest.title.length > 100) {
-            return buildValError(request, response, "Titles of posts must be between 5 and 100 characters long", "invalid.body.title.length");   
-        }     
+        const postRequest = request.body;
+
+        if(postRequest.title) {
+            postRequest.title = postRequest.title.trim();
+            if(postRequest.title.length < 5 || postRequest.title.length > 100) {
+                return buildValError(request, response, "Titles of posts must be between 5 and 100 characters long", "invalid.body.title.length");   
+            }     
+        }
 
         if(!postRequest.text || postRequest.text.length < 5) {
             return buildValError(request, response, "No text provied", "missing.body.text");  
@@ -123,12 +121,7 @@ route.delete("/:id", async (request: RequestWithUser, response: Response) => {
         const idToDelete = request.params.id;
         if(idToDelete) {
             const entityToDelete = await Post.findById(idToDelete);
-            console.log(entityToDelete);
             if(entityToDelete) {
-                console.log(entityToDelete.userId);
-                console.log(String(request.user._id));
-                console.log(entityToDelete.userId === String(request.user._id));
-                console.log(entityToDelete.userId == String(request.user._id));
                 if(entityToDelete.userId === String(request.user._id)) {
                     const result = await Post.deleteOne({ _id: idToDelete });
                     console.log(result);
