@@ -1,5 +1,5 @@
 import "./share.css";
-import { PermMedia, Label, Room, EmojiEmotions } from "@material-ui/icons";
+import { PermMedia, Label, Room, EmojiEmotions, Cancel } from "@material-ui/icons";
 import { AuthContext } from "../../context/AuthContext";
 import React, { useContext, useRef, useState } from "react";
 import axios from "axios";
@@ -14,7 +14,7 @@ export const Share = ({ posts, setPosts }: IShareProps) => {
 
     const { user } = useContext(AuthContext);
     const shareInput = useRef() as React.MutableRefObject<HTMLInputElement>;
-    const [ file, setFile ] = useState<File>();
+    const [ file, setFile ] = useState<File | undefined>();
 
 
     const handleShare = async (e: React.SyntheticEvent) => {
@@ -53,9 +53,13 @@ export const Share = ({ posts, setPosts }: IShareProps) => {
                     <img src={user?.profilePicture ? `/images/${user.profilePicture}` : `/images/noAvatar.png`} 
                         className="share-top-profile-img" alt="Profilbild"/>
                     <input placeholder="Was beschäftigt dich gerade?" className="share-top-input" required minLength={5} ref={ shareInput } />
-                    { file ? <><br /><p>{ file.name }</p></> : undefined }
                 </div>
                 <hr className="share-hr" />
+                { file && 
+                    <div className="share-image-container">
+                        <img src={ URL.createObjectURL(file) } alt="" className="share-image" />
+                        <Cancel className="share-image-cancel" onClick={ () => setFile(undefined) }/>
+                    </div> }
                 <form onSubmit={ handleShare } className="share-bottom">
                     <div className="share-bottom-options">
                         <label htmlFor="file" className="share-bottom-options-option" title="Noch nicht implementiert">
