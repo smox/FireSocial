@@ -14,6 +14,7 @@ import axios from "axios";
 import { AuthContext } from "./context/AuthContext";
 import { useEffect, useContext } from "react";
 import { clearUser, getUserInfo } from "./context/AuthActions";
+import Messenger from "./pages/messenger/Messenger";
 
 const App = () => {
 
@@ -53,6 +54,9 @@ const App = () => {
           </Route>
           <Route path="/login">
             { user ? <Redirect to="/" /> : <Login /> }
+          </Route>
+          <Route path="/messenger">
+            { user ? <Messenger /> : <Login /> }
           </Route>
           <Route path="/register">
             { user ? <Redirect to="/" /> : <Register /> }

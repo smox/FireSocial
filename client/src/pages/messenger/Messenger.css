@@ -1,0 +1,99 @@
+.messenger {
+    height: calc(100vh - 70px);
+    display: flex;
+}
+
+.messenger-menu {
+    flex: 3.5;
+
+}
+
+.messenger-menu-input {
+    width: 90%;
+    padding: 10px;
+    border: none;
+    border-bottom: 1px solid gray;
+    background-color: #FCF6F5FF;
+}
+
+.messenger-menu-input:focus {
+    outline: none;
+}
+
+.messenger-box {
+    flex: 5.5;
+}
+
+.messenger-box-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.messenger-box-top {
+    height: 100%;
+    overflow-y: scroll;
+    padding-right: 10px;
+}
+
+/*
+.messenger-box-top {
+    height: calc(100vh - 170px);
+    overflow-y: scroll;
+}*/
+
+.messenger-box-bottom {
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.messenger-box-bottom-message {
+    width: 80%;
+    height: 90px;
+}
+
+.messenger-box-bottom-send-button {
+    width: 70px;
+    height: 40px;
+    border: 1px solid #990011FF;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: white;
+}
+
+.messenger-box-bottom-send-button:hover {
+    background-color: #FCF6F5FF;
+    color: #990011FF;
+}
+
+.messenger-online {
+    flex: 3;
+}
+
+.messenger-menu-wrapper, .messenger-box-wrapper, .messenger-online-wrapper {
+    padding: 10px;
+    height: 100%;
+}
+
+.messenger-box-no-conversation {
+    position: absolute;
+    top: 5%;
+    width: 100%;
+    font-size: 50px;
+    text-align: center;
+    cursor: default;
+    color: lightgray;
+}
+
+.messenger-box-loading-conversation {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+    cursor: default;
+    color: lightgray;
+}

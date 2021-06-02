@@ -12,6 +12,9 @@ import { route as userRoute } from "./routes/user";
 import { route as postsRoute } from "./routes/posts";
 import { route as authRoute } from "./routes/auth";
 import { route as imagesRoute } from "./routes/images"; 
+import { route as conversationsRoute } from "./routes/conversations"; 
+import { route as messagesRoute } from "./routes/messages"; 
+
 import authMiddleware from './middleware/auth.middleware';
 
 
@@ -52,6 +55,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/posts", postsRoute);
 app.use("/api/upload", imagesRoute);
+app.use("/api/conversations", conversationsRoute);
+app.use("/api/messages", messagesRoute);
 
 
 app.get("/", (req: Request, res: Response) => {
