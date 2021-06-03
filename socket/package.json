@@ -1,0 +1,30 @@
+{
+  "name": "org.sm0x.apps.firesocial.socket",
+  "version": "1.0.0",
+  "description": "Socket Server for real time communication in FireSocial",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smox/FireSocial.git"
+  },
+  "author": "Michael Brunner <michael.brunner@sm0x.org>",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/smox/FireSocial/issues"
+  },
+  "homepage": "https://github.com/smox/FireSocial#readme",
+  "dependencies": {
+    "nodemon": "^2.0.7",
+    "socket.io": "^4.1.2"
+  },
+  "devDependencies": {
+    "@types/nodemon": "^1.19.0",
+    "@types/socket.io": "^3.0.2",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
+  }
+}

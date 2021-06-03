@@ -8,6 +8,8 @@ import { MutableRefObject, useContext, useEffect, useRef, useState } from "react
 import axios from "axios";
 import { IConversation } from "../../interfaces/models/IConversation";
 import { IMessage } from "../../interfaces/models/IMessage";
+import { io, Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io-client/build/typed-events";
 
 export interface IMessengerProps {
 }
@@ -20,8 +22,14 @@ const Messenger = (props: IMessengerProps) => {
   const [ loadingConversations, setLoadingConversations ] = useState<boolean>(false);
   const [ messages, setMessages ] = useState<IMessage[]>([]);
   const [ newMessage, setNewMessage ] = useState<string>("");
+  const [ socket, setSocket ] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>();
+
 
   const scrollRef = useRef() as MutableRefObject<HTMLDivElement>;
+
+  useEffect(() => {
+    setSocket(io("ws://localhost:8900"));
+  }, []);
 
   useEffect(() => {
     const getConversations = async () => {
